@@ -164,6 +164,24 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         return instance
 
 class OrderListSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Order
-            fields = '__all__'
+
+    product_name=serializers.SerializerMethodField()
+    user_name = serializers.SerializerMethodField()
+    def get_product_name(self,obj):
+        if obj.product_id:
+            product_dict={'product_name':obj.product_id.product_name,
+                        'product_description':obj.product_id.product_description,
+                        'product_id':obj.product_id.product_id,
+                        'object_id':obj.product_id.object_id,
+                        'id':obj.product_id.id}
+        return product_dict
+    def get_user_name(self,obj):
+        if obj.user_id:
+            user_dict={'user_name': obj.user_id.first_name + ' '+obj.user_id.last_name,
+                        'user_id':obj.user_id.user_id,
+                        'id':obj.user_id.id}
+        return user_dict
+    
+    class Meta:
+        model = Order
+        fields = ['id','object_id','product_name','user_name','order_date','order_id']
